@@ -1,0 +1,101 @@
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #f4f4f4;
+    font-size: 15px;
+}
+
+.login-container {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 350px;
+    text-align: center;
+}
+
+.login-container img {
+    max-width: 200px;
+    margin-bottom: 10px;
+}
+
+.login-container h2 {
+    margin: 0 0 15px 0;
+    color: #333;
+    font-size: 18px;
+    text-align: center;
+}
+
+.twofa-alert {
+    background-color: #e8f5e9;
+    border: 1px solid #c8e6c9;
+    border-radius: 10px;
+    padding: 15px;
+    margin-top: 15px;
+    color: #2e7d32;
+    text-align: center;
+    font-size: 14px;
+    min-height: 150px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.twofa-alert p {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.twofa-button {
+    width: 100%;
+    padding: 10px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+.twofa-button:hover {
+    background-color: #45a049;
+}
+
+@media screen and (max-width: 600px) {
+    .login-container {
+        padding: 15px;
+        width: 90%;
+    }
+
+    .login-container img {
+        max-width: 150px;
+        margin-bottom: 10px;
+    }
+
+    .login-container h2 {
+        font-size: 16px;
+    }
+
+    .twofa-alert {
+        padding: 10px;
+        min-height: 120px;
+        gap: 8px;
+    }
+
+    .twofa-button {
+        padding: 8px;
+        font-size: 13px;
+    }
+}

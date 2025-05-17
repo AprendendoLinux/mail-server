@@ -1,0 +1,251 @@
+/*M!999999\- enable the sandbox mode */ 
+-- MariaDB dump 10.19  Distrib 10.11.11-MariaDB, for debian-linux-gnu (x86_64)
+--
+-- Host: 127.0.0.1    Database: dev
+-- ------------------------------------------------------
+-- Server version	5.7.36
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `admin_domains`
+--
+
+DROP TABLE IF EXISTS `admin_domains`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `admin_domains` (
+  `admin_username` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `domain` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  PRIMARY KEY (`admin_username`,`domain`),
+  KEY `admin_domains_ibfk_2` (`domain`),
+  CONSTRAINT `admin_domains_ibfk_1` FOREIGN KEY (`admin_username`) REFERENCES `admins` (`username`) ON DELETE CASCADE,
+  CONSTRAINT `admin_domains_ibfk_2` FOREIGN KEY (`domain`) REFERENCES `domain` (`domain`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `admin_domains`
+--
+
+LOCK TABLES `admin_domains` WRITE;
+/*!40000 ALTER TABLE `admin_domains` DISABLE KEYS */;
+INSERT INTO `admin_domains` VALUES
+('firenet','firenettelecom.online'),
+('meuip','meuip.site'),
+('racarubronegra','racarubronegra.com.br');
+/*!40000 ALTER TABLE `admin_domains` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `admins`
+--
+
+DROP TABLE IF EXISTS `admins`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `admins` (
+  `username` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `email` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `password` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `active` tinyint(1) NOT NULL DEFAULT '1',
+  `is_superadmin` tinyint(1) NOT NULL DEFAULT '0',
+  `totp_secret` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `two_factor_enabled` tinyint(1) DEFAULT '0',
+  PRIMARY KEY (`username`),
+  UNIQUE KEY `email` (`email`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `admins`
+--
+
+LOCK TABLES `admins` WRITE;
+/*!40000 ALTER TABLE `admins` DISABLE KEYS */;
+INSERT INTO `admins` VALUES
+('firenet','magnatahp+firenet@gmail.com','$2y$10$pBg2FXskhYKH/oExvBVpz.xiKbsi/cj3KPVxJLgk7ceqezPzMzyXm',1,0,NULL,0),
+('henrique','magnatahp@gmail.com','$2y$10$bxuuh9y8ZvORMolsObD/HehZlt5BjbgUchyHBorsF32GPhKkVDoey',1,1,NULL,0),
+('meuip','magnatahp+meuip@gmail.com','$2y$10$b4B1/b8WHOKaJg0Ru3JAHegGY49ujuUNk9uJgGhapta/3UDTYYFEi',1,0,NULL,0),
+('racarubronegra','henrique@racarubronegra.com.br','$2y$10$hBgnyGh9jk0LICAd3HxMpubSHzJJIjfkwMSdT4iHuZXc8u0qOeSfe',1,0,NULL,0);
+/*!40000 ALTER TABLE `admins` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `alias`
+--
+
+DROP TABLE IF EXISTS `alias`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `alias` (
+  `address` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `goto` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `domain` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `active` tinyint(1) NOT NULL DEFAULT '1',
+  `funcion` char(1) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`address`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `alias`
+--
+
+LOCK TABLES `alias` WRITE;
+/*!40000 ALTER TABLE `alias` DISABLE KEYS */;
+INSERT INTO `alias` VALUES
+('arquibancada@racarubronegra.com.br','magnatahp@gmail.com','racarubronegra.com.br',1,'A'),
+('comercial@racarubronegra.com.br','magnatahp@gmail.com','racarubronegra.com.br',1,'A'),
+('contato@racarubronegra.com.br','magnatahp@gmail.com','racarubronegra.com.br',1,'A'),
+('dominio@racarubronegra.com.br','magnatahp@gmail.com','racarubronegra.com.br',1,'A'),
+('faleconosco@racarubronegra.com.br','magnatahp@gmail.com','racarubronegra.com.br',1,'A'),
+('henrique@firenettelecom.online','magnatahp@gmail.com','firenettelecom.online',1,'R'),
+('henrique@meuip.site','magnatahp@gmail.com','meuip.site',1,'R'),
+('henrique@racarubronegra.com.br','magnatahp@gmail.com','racarubronegra.com.br',1,'R'),
+('meuip@meuip.site','magnatahp@gmail.com','meuip.site',1,'A'),
+('mural@racarubronegra.com.br','magnatahp@gmail.com','racarubronegra.com.br',1,'A'),
+('racarubronegra@racarubronegra.com.br','magnatahp@gmail.com','racarubronegra.com.br',1,'A'),
+('vendas@firenettelecom.online','magnatahp@gmail.com','firenettelecom.online',1,'A'),
+('webmaster@racarubronegra.com.br','magnatahp@gmail.com','racarubronegra.com.br',1,'A');
+/*!40000 ALTER TABLE `alias` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `domain`
+--
+
+DROP TABLE IF EXISTS `domain`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `domain` (
+  `domain` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `active` tinyint(1) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`domain`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `domain`
+--
+
+LOCK TABLES `domain` WRITE;
+/*!40000 ALTER TABLE `domain` DISABLE KEYS */;
+INSERT INTO `domain` VALUES
+('firenettelecom.online',1),
+('meuip.site',1),
+('racarubronegra.com.br',1);
+/*!40000 ALTER TABLE `domain` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `mailbox`
+--
+
+DROP TABLE IF EXISTS `mailbox`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `mailbox` (
+  `username` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `password` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `domain` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `active` tinyint(1) NOT NULL DEFAULT '1',
+  `quota` bigint(20) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`username`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `mailbox`
+--
+
+LOCK TABLES `mailbox` WRITE;
+/*!40000 ALTER TABLE `mailbox` DISABLE KEYS */;
+INSERT INTO `mailbox` VALUES
+('henrique@firenettelecom.online','$2y$10$FEQLoAzzeugRswOKxVhxZOpw5IvhGSMrlh9uJpyhSLYiJ5uDZh8eq','Henrique Fagundes','firenettelecom.online',1,16106127360),
+('henrique@meuip.site','$2y$10$SLmdmHIe0gvQhpOlnNgiduuX6XiMlcqEhRiVScIuhwOO3o8obvwOS','Henrique Fagundes','meuip.site',1,2147483648),
+('henrique@racarubronegra.com.br','$2y$10$gXYk4r4RiUmjSAGTZp5P3u1e2jqBaKx68p7xRU.DdjiHsRTOGZsSu','Henrique Fagundes','racarubronegra.com.br',1,2147483648);
+/*!40000 ALTER TABLE `mailbox` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `password_resets`
+--
+
+DROP TABLE IF EXISTS `password_resets`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `password_resets` (
+  `email` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `token` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_at` datetime NOT NULL,
+  PRIMARY KEY (`email`),
+  CONSTRAINT `fk_password_resets_email` FOREIGN KEY (`email`) REFERENCES `admins` (`email`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `password_resets`
+--
+
+LOCK TABLES `password_resets` WRITE;
+/*!40000 ALTER TABLE `password_resets` DISABLE KEYS */;
+/*!40000 ALTER TABLE `password_resets` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `trusted_devices`
+--
+
+DROP TABLE IF EXISTS `trusted_devices`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `trusted_devices` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `username` varchar(255) NOT NULL,
+  `token` varchar(64) NOT NULL,
+  `expires_at` datetime NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `token` (`token`)
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `trusted_devices`
+--
+
+LOCK TABLES `trusted_devices` WRITE;
+/*!40000 ALTER TABLE `trusted_devices` DISABLE KEYS */;
+INSERT INTO `trusted_devices` VALUES
+(1,'henrique','f261f6082a4b3a6925b0b33c89d1b5c90b8eac51e918221a6ec1c44b7e9bc7d0','2025-06-08 11:13:27'),
+(2,'henrique','52a3c05983b61a3ff8c0ae5507af3557cf4dbef93e0f055c640019436fcafd3d','2025-06-08 11:14:40'),
+(3,'henrique','3f45ab938f1b9756e02840f7ed5242d46d7c9f1f5ab6e86475913a0f9fa681c0','2025-06-08 11:24:44'),
+(4,'henrique','8af50dc7cc2874dd0c7a72b05a9410e93f551275827f7e8af3fccb918d833dfd','2025-06-09 16:00:19'),
+(5,'henrique','d40c9a4439565cd9c04b761fe5a5a287de174464e7bf55ae42bab8ac75ff2055','2025-06-09 16:29:25'),
+(6,'henrique','5a451e91485405f84d7e396e030058a4b764f3fff31d9548b96650cfb75a94d4','2025-06-09 16:33:52'),
+(7,'henrique','5aeb09fb5b4cc0daad8a14f6a5d1fb6498260bd04e62a023ae8838522d11ecfb','2025-06-09 17:29:55'),
+(8,'henrique','461dc8b8931260526b92ef2725946190647412d6752872fde553b3acfe85ef0b','2025-06-09 18:31:16'),
+(9,'henrique','b65e8838370b2845e641824c190da674966d427109dbda3f407aba6f10802c32','2025-06-09 18:31:59');
+/*!40000 ALTER TABLE `trusted_devices` ENABLE KEYS */;
+UNLOCK TABLES;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2025-05-10 18:56:34

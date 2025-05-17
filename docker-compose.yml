@@ -1,0 +1,474 @@
+services:
+  mail-db:
+    # Imagem do MySQL versão 8 para o banco de dados
+    image: mysql:9
+    # Nome do contêiner para identificação
+    container_name: mail-db
+    # Hostname do contêiner, usado internamente
+    hostname: mail-db
+    environment:
+      # Senha do usuário root do MySQL, usada para acesso administrativo
+      - MYSQL_ROOT_PASSWORD=Senha@Segura@MySQL
+      # Banco de dados criado automaticamente na inicialização (para o mailserver)
+      - MYSQL_DATABASE=mailserver
+      # Usuário criado automaticamente com acesso ao banco mailserver
+      - MYSQL_USER=mailuser
+      # Senha do usuário mailuser, usada pelo serviço mailserver
+      - MYSQL_PASSWORD=12345678910
+      # Nome do banco de dados adicional para o Roundcube
+      - ROUNDCUBE_DB_NAME=roundcube
+      # Usuário para gerenciar o banco roundcube
+      - ROUNDCUBE_DB_USER=roundcube
+      # Senha do usuário roundcube, distinta da senha do mailuser
+      - ROUNDCUBE_DB_PASSWORD=1020304050
+      # Desativa a importação de dados de fuso horário para inicialização mais rápida
+      - MYSQL_INITDB_SKIP_TZINFO=1
+    volumes:
+      # Persiste os dados do MySQL no host
+      - /srv/mail/db:/var/lib/mysql
+      - ./init.db.sh:/docker-entrypoint-initdb.d/init-db.sh
+    # Conecta o contêiner à rede mail-network para comunicação com outros serviços
+    networks:
+      - mail-network
+
+  mail-certbot:
+    image: aprendendolinux/certbot-cloudflare:latest
+    restart: always
+    container_name: mail-certbot
+    hostname: mail-certbot
+    networks:
+      - mail-network
+    volumes:
+      - /srv/mail/certs/data:/etc/letsencrypt
+    environment:
+      - TZ=America/Sao_Paulo
+    # Nao colocar o conteudo da variavel CERTBOT_DOMAINS entre aspas ou aspas simples
+      - CERTBOT_DOMAINS=-d *.dominiobase.com.br -d *.dominio1.com.br -d *.dominio2.com.br -d *.etc.om.br
+      - CERTBOT_BASE_DOMAIN=dominiobase.com.br
+      - CERTBOT_EMAIL=email-certbot@email.com.br
+      - CLOUDFLARE_EMAIL=email-conta-cloudflare@email.com.br
+      - CLOUDFLARE_API_KEY=sua-api-cloudflare
+    entrypoint: ["/bin/sh", "/entrypoint.sh"]
+
+  mail-server:
+    # Imagem do servidor de e-mail, baseada no docker-mailserver
+    image: aprendendolinux/mailserver:latest
+    container_name: mail-server
+    # Define o hostname do servidor de e-mail para identificação em comunicações SMTP
+    hostname: mail.dominiobase.com.br
+    # Garante que o serviço certbot (para certificados SSL) esteja ativo antes de iniciar
+    depends_on:
+      - mail-certbot
+      - mail-db
+    # Mapeia portas externas para serviços de e-mail (SMTP, SMTPS, Submission, IMAPS, POP3S)
+    ports:
+      - "25:25"   # SMTP (envio de e-mails)
+      - "465:465" # SMTPS (SMTP seguro com SSL)
+      - "587:587" # Submission (SMTP para clientes autenticados)
+      - "993:993" # IMAPS (IMAP seguro)
+      - "995:995" # POP3S (POP3 seguro)
+    # Volumes para persistência de dados, certificados, logs e configuração
+    volumes:
+      # Dados de e-mails (caixas de correio)
+      - /srv/mail/data:/var/mail
+      # Estado do Postfix (e.g., filas de e-mail)
+      - /srv/mail/state:/var/mail-state
+      # Logs do Postfix e outros serviços
+      - /srv/mail/logs:/var/log/mail
+      # Certificados SSL gerados pelo Certbot
+      - /srv/mail/certs/data:/etc/letsencrypt
+      # Configurações do OpenDKIM (assinaturas DKIM)
+      - /srv/mail/opendkim:/tmp/docker-mailserver/opendkim
+      # Sincroniza o fuso horário com o host
+      - /etc/localtime:/etc/localtime:ro
+    environment:
+      # Permite sobrescrever o hostname (vazio para usar o definido em 'hostname')
+      - OVERRIDE_HOSTNAME=mail.dominiobase.com.br
+      # Define o nível de verbosidade dos logs (trace, debug, info, warn, error, critical)
+      - LOG_LEVEL=info
+      # Nível de log do Supervisor (gerenciador de processos); vazio usa padrão
+      - SUPERVISOR_LOGLEVEL=
+      # UID personalizado para o usuário virtual de e-mails; vazio usa padrão (5000)
+      - DMS_VMAIL_UID=
+      # GID personalizado para o grupo virtual de e-mails; vazio usa padrão (5000)
+      - DMS_VMAIL_GID=
+      # Método de provisionamento de contas (e.g., file, ldap); vazio usa padrão (file)
+      - ACCOUNT_PROVISIONER=
+      # Endereço do postmaster para notificações administrativas
+      - POSTMASTER_ADDRESS=postmaster@dominiobase.com.br
+      # Habilita verificações automáticas de atualizações do docker-mailserver
+      - ENABLE_UPDATE_CHECK=1
+      # Intervalo para verificação de atualizações (1d = 1 dia)
+      - UPDATE_CHECK_INTERVAL=1d
+      # Permite conexões de contêineres na mesma rede Docker (network = rede mail-network)
+      - PERMIT_DOCKER=network
+      # Fuso horário; vazio usa o do volume /etc/localtime
+      - TZ=
+      # Interface de rede específica para o servidor; vazio usa todas
+      - NETWORK_INTERFACE=
+      # Nível de criptografia TLS (modern, intermediate, old); vazio usa padrão
+      - TLS_LEVEL=
+      # Habilita proteção contra spoofing verificando registros SPF (1 = ativado)
+      - SPOOF_PROTECTION=1
+      # Habilita Sender Rewriting Scheme para redirecionamentos (0 = desativado)
+      - ENABLE_SRS=0
+      # Habilita OpenDKIM para assinaturas DKIM nos e-mails enviados (1 = ativado)
+      - ENABLE_OPENDKIM=1
+      # Habilita OpenDMARC para validação DMARC nos e-mails recebidos (1 = ativado)
+      - ENABLE_OPENDMARC=1
+      # Habilita verificação SPF via policyd-spf (1 = ativado)
+      - ENABLE_POLICYD_SPF=1
+      # Habilita o serviço POP3 para acesso a e-mails (1 = ativado)
+      - ENABLE_POP3=1
+      # Habilita o serviço IMAP para acesso a e-mails (1 = ativado)
+      - ENABLE_IMAP=1
+      # Habilita ClamAV para escaneamento de vírus em e-mails (1 = ativado)
+      - ENABLE_CLAMAV=1
+      # Prefixo adicionado ao assunto de e-mails marcados como spam; vazio usa padrão
+      - SPAM_SUBJECT=SPAM
+      # Habilita Rspamd para filtragem de spam e DKIM/DMARC (1 = ativado)
+      - ENABLE_RSPAMD=1
+      # Habilita Redis para caching do Rspamd; vazio desativa
+      - ENABLE_RSPAMD_REDIS=
+      # Habilita aprendizado automático de spam/ham no Rspamd (0 = desativado)
+      - RSPAMD_LEARN=0
+      # Aplica filtragem Rspamd a e-mails autenticados (0 = desativado)
+      - RSPAMD_CHECK_AUTHENTICATED=0
+      # Habilita greylisting no Rspamd (0 = desativado)
+      - RSPAMD_GREYLISTING=0
+      # Habilita filtragem heurística avançada no Rspamd (1 = ativado)
+      - RSPAMD_HFILTER=1
+      # Pontuação para hostnames desconhecidos na filtragem Rspamd
+      - RSPAMD_HFILTER_HOSTNAME_UNKNOWN_SCORE=6
+      # Habilita filtragem neural no Rspamd (0 = desativado)
+      - RSPAMD_NEURAL=0
+      # Habilita Amavis para integração com ClamAV e SpamAssassin (1 = ativado)
+      - ENABLE_AMAVIS=1
+      # Nível de verbosidade dos logs do Amavis (-1 a 5; 2 = detalhado)
+      - AMAVIS_LOGLEVEL=2
+      # Habilita listas de bloqueio DNS (DNSBL) para filtragem de spam (0 = desativado)
+      - ENABLE_DNSBL=0
+      # Habilita Fail2Ban para bloquear tentativas maliciosas (0 = desativado)
+      - ENABLE_FAIL2BAN=0
+      # Tipo de bloqueio do Fail2Ban (drop = descarta pacotes)
+      - FAIL2BAN_BLOCKTYPE=drop
+      # Habilita ManageSieve para gerenciamento de filtros de e-mail; vazio desativa
+      - ENABLE_MANAGESIEVE=
+      # Ação do Postscreen para e-mails suspeitos (enforce = rejeita após testes)
+      - POSTSCREEN_ACTION=enforce
+      # Define o uso de certificados SSL manuais (em vez de letsencrypt ou snakeoil)
+      - SSL_TYPE=manual
+      # Caminho para o certificado SSL fullchain (usado pelo Postfix e Dovecot)
+      - SSL_CERT_PATH=/etc/letsencrypt/live/dominiobase.com.br/fullchain.pem
+      # Caminho para a chave privada do certificado SSL
+      - SSL_KEY_PATH=/etc/letsencrypt/live/dominiobase.com.br/privkey.pem
+      # Caminho alternativo para certificado SSL; vazio usa principal
+      - SSL_ALT_CERT_PATH=
+      # Caminho alternativo para chave privada; vazio usa principal
+      - SSL_ALT_KEY_PATH=
+      # Tempo de retenção de e-mails com vírus antes de exclusão; vazio usa padrão
+      - VIRUSMAILS_DELETE_DELAY=
+      # Configuração do agente de entrega do Postfix; vazio usa padrão
+      - POSTFIX_DAGENT=
+      # Limite de tamanho da caixa de correio no Postfix; vazio usa padrão
+      - POSTFIX_MAILBOX_SIZE_LIMIT=
+      # Habilita cotas de armazenamento por usuário (1 = ativado)
+      - ENABLE_QUOTAS=1
+      # Limite de tamanho de mensagem no Postfix; vazio usa padrão (50MB)
+      - POSTFIX_MESSAGE_SIZE_LIMIT=
+      # Limite de tamanho de mensagem para escaneamento ClamAV; vazio usa padrão
+      - CLAMAV_MESSAGE_SIZE_LIMIT=
+      # Gatilho para relatórios PFLOGSUMM (e.g., daily); vazio desativa
+      - PFLOGSUMM_TRIGGER=
+      # Destinatário dos relatórios PFLOGSUMM; vazio desativa
+      - PFLOGSUMM_RECIPIENT=
+      # Remetente dos relatórios PFLOGSUMM; vazio usa padrão
+      - PFLOGSUMM_SENDER=
+      # Intervalo para relatórios Logwatch; vazio desativa
+      - LOGWATCH_INTERVAL=
+      # Destinatário dos relatórios Logwatch; vazio desativa
+      - LOGWATCH_RECIPIENT=
+      # Remetente dos relatórios Logwatch; vazio usa padrão
+      - LOGWATCH_SENDER=
+      # Destinatário de relatórios gerais; vazio usa postmaster
+      - REPORT_RECIPIENT=
+      # Remetente de relatórios gerais; vazio usa padrão
+      - REPORT_SENDER=
+      # Intervalo de rotação de logs (weekly = semanal)
+      - LOGROTATE_INTERVAL=weekly
+      # Número de arquivos de log antigos mantidos
+      - LOGROTATE_COUNT=4
+      # Rejeita clientes com hostname desconhecido no Postfix (0 = desativado)
+      - POSTFIX_REJECT_UNKNOWN_CLIENT_HOSTNAME=0
+      # Protocolos de rede do Postfix (ipv4 = apenas IPv4)
+      - POSTFIX_INET_PROTOCOLS=all
+      # Habilita MTA-STS para políticas de segurança TLS (0 = desativado)
+      - ENABLE_MTA_STS=0
+      # Protocolos de rede do Dovecot (ipv4 = apenas IPv4)
+      - DOVECOT_INET_PROTOCOLS=all
+      # Habilita SpamAssassin para filtragem de spam (1 = ativado)
+      - ENABLE_SPAMASSASSIN=1
+      # Habilita regras KAM do SpamAssassin (0 = desativado)
+      - ENABLE_SPAMASSASSIN_KAM=0
+      # Entrega e-mails marcados como spam à caixa de entrada (1 = ativado)
+      - SPAMASSASSIN_SPAM_TO_INBOX=1
+      # Move e-mails de spam para a pasta Junk (1 = ativado)
+      - MOVE_SPAM_TO_JUNK=1
+      # Marca e-mails de spam como lidos (0 = desativado)
+      - MARK_SPAM_AS_READ=0
+      # Pontuação mínima para marcar e-mail como spam (2.0 = moderado)
+      - SA_TAG=2.0
+      # Pontuação para ações adicionais, como mover para Junk (6.31 = padrão)
+      - SA_TAG2=6.31
+      # Pontuação para rejeitar e-mail como spam (12.0 = menos agressivo)
+      - SA_KILL=12.0
+      # Habilita Fetchmail para buscar e-mails de servidores externos (0 = desativado)
+      - ENABLE_FETCHMAIL=0
+      # Intervalo de polling do Fetchmail em segundos (300 = 5 minutos)
+      - FETCHMAIL_POLL=300
+      # Habilita execução paralela do Fetchmail (0 = desativado)
+      - FETCHMAIL_PARALLEL=0
+      # Habilita Getmail para buscar e-mails (0 = desativado)
+      - ENABLE_GETMAIL=0
+      # Intervalo de polling do Getmail em minutos (5 = 5 minutos)
+      - GETMAIL_POLL=5
+      # Habilita autenticação via OAUTH2; vazio desativa
+      - ENABLE_OAUTH2=
+      # URL de introspecção para tokens OAUTH2; vazio desativa
+      - OAUTH2_INTROSPECTION_URL=
+      # Habilita STARTTLS para conexões LDAP; vazio desativa
+      - LDAP_START_TLS=
+      # Host do servidor LDAP; vazio desativa
+      - LDAP_SERVER_HOST=
+      # Base de busca para consultas LDAP; vazio desativa
+      - LDAP_SEARCH_BASE=
+      # DN para autenticação LDAP; vazio desativa
+      - LDAP_BIND_DN=
+      # Senha para autenticação LDAP; vazio desativa
+      - LDAP_BIND_PW=
+      # Filtro de consulta LDAP para usuários; vazio usa padrão
+      - LDAP_QUERY_FILTER_USER=
+      # Filtro de consulta LDAP para grupos; vazio usa padrão
+      - LDAP_QUERY_FILTER_GROUP=
+      # Filtro de consulta LDAP para aliases; vazio usa padrão
+      - LDAP_QUERY_FILTER_ALIAS=
+      # Filtro de consulta LDAP para domínios; vazio usa padrão
+      - LDAP_QUERY_FILTER_DOMAIN=
+      # Configuração TLS específica do Dovecot; vazio usa padrão
+      - DOVECOT_TLS=
+      # Filtro LDAP para usuários no Dovecot; vazio usa padrão
+      - DOVECOT_USER_FILTER=
+      # Filtro LDAP para senhas no Dovecot; vazio usa padrão
+      - DOVECOT_PASS_FILTER=
+      # Formato de armazenamento de e-mails (maildir = padrão)
+      - DOVECOT_MAILBOX_FORMAT=maildir
+      # Habilita autenticação por bind no Dovecot; vazio desativa
+      - DOVECOT_AUTH_BIND=
+      # Habilita Postgrey para greylisting (0 = desativado)
+      - ENABLE_POSTGREY=0
+      # Atraso inicial do Postgrey em segundos (300 = 5 minutos)
+      - POSTGREY_DELAY=300
+      # Idade máxima de registros no Postgrey em dias (35 dias)
+      - POSTGREY_MAX_AGE=35
+      # Mensagem exibida para e-mails atrasados pelo Postgrey
+      - POSTGREY_TEXT=Delayed by Postgrey
+      # Número de conexões para auto-whitelisting no Postgrey (5 = padrão)
+      - POSTGREY_AUTO_WHITELIST_CLIENTS=5
+      # Habilita SASLAUTHD para autenticação SASL (0 = desativado)
+      - ENABLE_SASLAUTHD=0
+      # Mecanismos de autenticação SASL; vazio usa padrão
+      - SASLAUTHD_MECHANISMS=
+      # Opções para mecanismos SASL; vazio usa padrão
+      - SASLAUTHD_MECH_OPTIONS=
+      # Host do servidor LDAP para SASLAUTHD; vazio desativa
+      - SASLAUTHD_LDAP_SERVER=
+      # DN para autenticação SASLAUTHD; vazio desativa
+      - SASLAUTHD_LDAP_BIND_DN=
+      # Senha para autenticação SASLAUTHD; vazio desativa
+      - SASLAUTHD_LDAP_PASSWORD=
+      # Base de busca para SASLAUTHD; vazio desativa
+      - SASLAUTHD_LDAP_SEARCH_BASE=
+      # Filtro LDAP para SASLAUTHD; vazio usa padrão
+      - SASLAUTHD_LDAP_FILTER=
+      # Habilita STARTTLS para SASLAUTHD; vazio desativa
+      - SASLAUTHD_LDAP_START_TLS=
+      # Verifica certificados TLS no SASLAUTHD; vazio desativa
+      - SASLAUTHD_LDAP_TLS_CHECK_PEER=
+      # Caminho para o certificado CA no SASLAUTHD; vazio desativa
+      - SASLAUTHD_LDAP_TLS_CACERT_FILE=
+      # Diretório de certificados CA no SASLAUTHD; vazio desativa
+      - SASLAUTHD_LDAP_TLS_CACERT_DIR=
+      # Atributo de senha no SASLAUTHD; vazio usa padrão
+      - SASLAUTHD_LDAP_PASSWORD_ATTR=
+      # Método de autenticação no SASLAUTHD; vazio usa padrão
+      - SASLAUTHD_LDAP_AUTH_METHOD=
+      # Mecanismo LDAP no SASLAUTHD; vazio usa padrão
+      - SASLAUTHD_LDAP_MECH=
+      # Habilita Sender Rewriting Scheme para redirecionamentos (1 = ativado)
+      - ENABLE_SRS=1
+      # Classes de remetentes para aplicar SRS (envelope_sender = padrão)
+      - SRS_SENDER_CLASSES=envelope_sender
+      # Domínios excluídos do SRS; vazio aplica a todos
+      - SRS_EXCLUDE_DOMAINS=
+      # Chave secreta para SRS; vazio usa padrão
+      - SRS_SECRET=
+      # Host de retransmissão padrão; vazio desativa
+      - DEFAULT_RELAY_HOST=
+      # Host de retransmissão SMTP; vazio desativa
+      - RELAY_HOST=
+      # Porta do host de retransmissão (25 = padrão SMTP)
+      - RELAY_PORT=25
+      # Usuário para autenticação no host de retransmissão; vazio desativa
+      - RELAY_USER=
+      # Senha para autenticação no host de retransmissão; vazio desativa
+      - RELAY_PASSWORD=
+      # Habilita mapeamento de senhas via MySQL para autenticação (1 = ativado)
+      - POSTFIX_MYSQL_PWDMAPS=1
+      # Host do banco MySQL para autenticação
+      - MAILSERVER_SQL_HOST=mail-db
+      # Porta do banco MySQL
+      - MAILSERVER_SQL_PORT=3306
+      # Nome do banco de dados MySQL
+      - MAILSERVER_SQL_DB=mailserver
+      # Usuário do banco MySQL
+      - MAILSERVER_SQL_USER=mailuser
+      # Senha do usuário do banco MySQL
+      - MAILSERVER_SQL_PASSWD=12345678910
+      # Habilita modo de depuração para logs detalhados do docker-mailserver (1 = ativado)
+      - DMS_DEBUG=1
+    # Capacidades adicionais para Fail2Ban (desativado, pois ENABLE_FAIL2BAN=0)
+    #cap_add:
+    #  - NET_ADMIN  # Necessário para Fail2Ban
+    # Reinicia o contêiner automaticamente em caso de falha
+    restart: always
+    networks:
+      mail-network:
+        # Define um endereço IP fixo na rede mail-network
+        ipv4_address: 192.168.22.254
+
+  mail-admin:
+    image: aprendendolinux/mail-admin:latest
+    container_name: mail-admin
+    hostname: mail-admin
+    environment:
+      #### SMTP Settings
+      # Host SMTP do seu provedor
+      - SMTP_HOST=smtp.dominio.com.br
+      # Porta SMTP (465 para SSL)
+      - SMTP_PORT=465
+      # Autenticação SMTP (1 para ativado, 0 para desativado)
+      - SMTP_AUTH=1
+      # Substitua pelo seu e-mail/usuario SMTP
+      - SMTP_USERNAME=email@dominio.com.br
+      # Substitua pela senha do e-mail/usuario
+      - SMTP_PASSWORD=senha-do-smtp
+      # Tipo de segurança (pode ser '', 'ssl' ou 'tls')
+      - SMTP_ENCRYPTION=ssl
+      # Endereço de "de" para os e-mails
+      - SMTP_FROM_EMAIL=mail-manager@dominio.com.br
+      #  Nome do remetente
+      - SMTP_FROM_NAME=Mail Manager
+      # Mantém a conexão SMTP aberta para múltiplos envios, melhorando performance
+      - SMTP_KEEP_ALIVE=true
+      # Nível de depuração do SMTP (0 = desativado, 1-4 = níveis crescentes de detalhes)
+      - SMTP_DEBUG=0
+      # Formato da saída de depuração (html, echo, error_log)
+      - SMTP_DEBUG_OUTPUT=html
+      # Desativa a verificação do certificado SSL do servidor SMTP
+      - SMTP_SSL_VERIFY_PEER=false
+      # Desativa a verificação do nome do host no certificado SSL
+      - SMTP_SSL_VERIFY_PEER_NAME=false
+      # Permite certificados SSL autoassinados no servidor SMTP
+      - SMTP_SSL_ALLOW_SELF_SIGNED=true
+      # Codificação de caracteres para o e-mail (UTF-8 suporta caracteres internacionais)
+      - SMTP_CHARSET=UTF-8
+      # Método de codificação do corpo do e-mail (base64 é comum para anexos e caracteres especiais)
+      - SMTP_ENCODING=base64
+      #### reCAPTCHA Settings
+      - RECAPTCHA_SITE_KEY=
+      - RECAPTCHA_SECRET_KEY=
+      - ENABLE_RECAPTCHA=false
+      #### Database Settings
+      - DB_HOST=mail-db
+      - DB_PORT=3306
+      - DB_DATABASE=mailserver
+      - DB_USER=mailuser
+      - DB_PASSWORD=12345678910
+    depends_on:
+      - mail-db
+      - mail-server
+    ports:
+      - "8081:80"
+    networks:
+      - mail-network
+
+  roundcube:
+    # Imagem do Roundcube, cliente de e-mail web-based (customização do roundcube/roundcubemail)
+    image: aprendendolinux/roundcube:latest
+    # Nome do contêiner para identificação
+    container_name: roundcube
+    # Hostname do contêiner, usado internamente
+    hostname: roundcube
+    # Adiciona uma entrada ao /etc/hosts do contêiner para resolver mail.dominiobase.com.br como o IP do mailserver
+    extra_hosts:
+      - "mail.dominiobase.com.br:192.168.22.254"
+    environment:
+      # Host padrão para conexão IMAP (ssl:// indica uso de IMAPS na porta 993)
+      - ROUNDCUBEMAIL_DEFAULT_HOST=ssl://mail.dominiobase.com.br
+      # Porta padrão para conexão IMAP (993 = IMAPS, protocolo seguro)
+      - ROUNDCUBEMAIL_DEFAULT_PORT=993
+      # Servidor SMTP para envio de e-mails (tls:// indica uso de STARTTLS na porta 587)
+      - ROUNDCUBEMAIL_SMTP_SERVER=tls://mail.dominiobase.com.br
+      # Porta SMTP para envio de e-mails (587 = porta de submissão com STARTTLS)
+      - ROUNDCUBEMAIL_SMTP_PORT=587
+      # Protocolo de segurança para SMTP (tls = usa STARTTLS para criptografia)
+      - ROUNDCUBEMAIL_SMTP_PROTOCOL=tls
+      # Tamanho máximo de arquivos para upload (e.g., anexos em e-mails)
+      - ROUNDCUBEMAIL_UPLOAD_MAX_FILESIZE=10M
+      # Idioma padrão da interface do Roundcube (pt_BR = Português do Brasil)
+      - ROUNDCUBEMAIL_LANGUAGE=pt_BR
+      # Tipo de banco de dados usado pelo Roundcube (mysql = MySQL/MariaDB)
+      - ROUNDCUBEMAIL_DB_TYPE=mysql
+      # Host do banco de dados para o Roundcube
+      - ROUNDCUBEMAIL_DB_HOST=mail-db
+      # Porta do banco de dados (3306 = padrão para MySQL/MariaDB)
+      - ROUNDCUBEMAIL_DB_PORT=3306
+      # Usuário do banco de dados para o Roundcube
+      - ROUNDCUBEMAIL_DB_USER=roundcube
+      # Senha do usuário do banco de dados
+      - ROUNDCUBEMAIL_DB_PASSWORD=1020304050
+      # Nome do banco de dados usado pelo Roundcube para armazenar configurações e dados
+      - ROUNDCUBEMAIL_DB_NAME=roundcube
+      # Domínio padrão para nomes de usuário (e.g., user@dominio.com); vazio desativa
+      - ROUNDCUBEMAIL_USERNAME_DOMAIN=
+      # Host do banco MySQL para autenticação do mailserver
+      - MAILSERVER_SQL_HOST=mail-db
+      # Porta do banco MySQL do mailserver
+      - MAILSERVER_SQL_PORT=3306
+      # Nome do banco de dados do mailserver
+      - MAILSERVER_SQL_DB=mailserver
+      # Usuário do banco MySQL do mailserver
+      - MAILSERVER_SQL_USER=mailuser
+      # Senha do usuário do banco MySQL do mailserver
+      - MAILSERVER_SQL_PASSWD=12345678910
+    # Garante que o serviço mailserver esteja ativo antes de iniciar o Roundcube
+    depends_on:
+      - mail-db
+      - mail-server
+    # Reinicia o contêiner automaticamente em caso de falha
+    restart: always
+    # Conecta o contêiner à rede echelon para comunicação com outros serviços
+    networks:
+      - mail-network
+    ports:
+      - "8080:80"
+
+networks:
+  mail-network:
+    driver: bridge
+    name: mail-network
+    ipam:
+      config:
+       - subnet: 192.168.22.0/24
+         gateway: 192.168.22.1
+

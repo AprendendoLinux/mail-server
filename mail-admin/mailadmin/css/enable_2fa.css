@@ -1,0 +1,339 @@
+/* Estilos para a página enable_2fa.php */
+
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #f4f4f4;
+    font-size: 15px;
+}
+
+.login-container {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 350px;
+    text-align: center;
+}
+
+.login-container img {
+    max-width: 200px;
+    margin-bottom: 10px;
+}
+
+.login-container h2 {
+    margin: 0 0 15px 0;
+    color: #333;
+    font-size: 18px;
+    text-align: center;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-family: Arial, sans-serif;
+    color: #333;
+    font-weight: bold;
+    text-align: left;
+}
+
+.form-group input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+    font-size: 15px;
+    transition: border-color 0.3s ease;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: #4CAF50;
+}
+
+.form-group input:disabled {
+    background-color: #f0f0f0;
+    color: #666;
+}
+
+.twofa-alert {
+    background-color: #fff3cd;
+    border: 1px solid #ffeeba;
+    border-radius: 10px;
+    padding: 15px;
+    margin-top: 15px;
+    color: #856404;
+    text-align: center;
+    font-size: 14px;
+    min-height: 150px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 15px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.twofa-alert p {
+    margin: 0;
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.twofa-button {
+    width: 100%;
+    padding: 10px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+.twofa-button:hover {
+    background-color: #45a049;
+}
+
+.dismiss-link {
+    font-size: 12px;
+    color: #666;
+    text-decoration: none;
+    margin-top: 0px;
+}
+
+.dismiss-link:hover {
+    text-decoration: underline;
+}
+
+/* Estilos do modal (alinhados com perfil.css) */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.modal.show {
+    display: flex;
+    opacity: 1;
+}
+
+.modal-content {
+    background-color: white;
+    padding: 25px;
+    border-radius: 10px;
+    width: 400px;
+    max-width: 90%;
+    position: relative;
+    font-family: Arial, sans-serif;
+    font-size: 15px;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
+    transform: scale(0.9);
+    transition: transform 0.3s ease;
+    text-align: center;
+}
+
+.modal.show .modal-content {
+    transform: scale(1);
+}
+
+.close-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    font-size: 28px;
+    cursor: pointer;
+    color: #666;
+    transition: color 0.3s ease;
+}
+
+.close-btn:hover {
+    color: #333;
+}
+
+.modal-content h3 {
+    margin: 0 0 20px 0;
+    font-size: 20px;
+    color: #4CAF50;
+    font-family: Arial, sans-serif;
+}
+
+.modal-submit-btn {
+    width: 100%;
+    padding: 12px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-family: Arial, sans-serif;
+    font-size: 15px;
+    transition: background-color 0.3s ease;
+}
+
+.modal-submit-btn:hover {
+    background-color: #45a049;
+}
+
+.qr-code {
+    display: block;
+    margin: 20px auto;
+    width: 100%;
+    max-width: 180px;
+    height: auto;
+}
+
+.totp-secret {
+    display: inline-block;
+    word-break: break-all;
+    overflow-wrap: break-word;
+    max-width: 100%;
+    font-size: 14px;
+    padding: 5px 10px;
+    background-color: #f0f0f0;
+    border-radius: 5px;
+    vertical-align: middle;
+}
+
+.copy-btn {
+    display: inline-block;
+    padding: 5px 10px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    margin-left: 10px;
+    transition: background-color 0.3s ease;
+    vertical-align: middle;
+}
+
+.copy-btn:hover {
+    background-color: #45a049;
+}
+
+.copy-feedback {
+    font-size: 12px;
+    color: #388e3c;
+    margin-top: 5px;
+    display: none;
+}
+
+/* Mensagem de erro (alinhada com perfil.css) */
+.error {
+    color: #d32f2f;
+    margin-bottom: 15px;
+    font-family: Arial, sans-serif;
+    background-color: #ffebee;
+    padding: 10px;
+    border-radius: 5px;
+    text-align: center;
+}
+
+@media screen and (max-width: 600px) {
+    .login-container {
+        padding: 15px;
+        width: 90%;
+    }
+
+    .login-container img {
+        max-width: 150px;
+        margin-bottom: 10px;
+    }
+
+    .login-container h2 {
+        font-size: 16px;
+    }
+
+    .twofa-alert {
+        padding: 10px;
+        min-height: 120px;
+        gap: 10px;
+    }
+
+    .twofa-button {
+        padding: 8px;
+        font-size: 13px;
+    }
+
+    .dismiss-link {
+        font-size: 11px;
+        margin-top: 5px;
+    }
+
+    .modal-content {
+        padding: 15px;
+        width: 90%;
+    }
+
+    .modal-content h3 {
+        font-size: 18px;
+    }
+
+    .form-group label {
+        font-size: 14px;
+    }
+
+    .form-group input[type="text"] {
+        font-size: 14px;
+        padding: 8px;
+    }
+
+    .modal-submit-btn {
+        font-size: 14px;
+        padding: 10px;
+    }
+
+    .close-btn {
+        font-size: 24px;
+        top: 10px;
+        right: 10px;
+    }
+
+    .qr-code {
+        max-width: 140px;
+        margin: 15px auto;
+    }
+
+    .totp-secret {
+        font-size: 12px;
+        padding: 5px;
+    }
+
+    .copy-btn {
+        font-size: 10px;
+        padding: 4px 8px;
+        margin-left: 5px;
+    }
+
+    .copy-feedback {
+        font-size: 10px;
+        margin-top: 5px;
+    }
+}

@@ -1,0 +1,81 @@
+/* Resetando margens padrão do body para garantir largura total */
+body {
+    margin: 0;
+}
+
+/* Estilizando o topo */
+.header {
+    background: #2E7D32; /* Verde fosco */
+    color: white;
+    padding: 55px 20px; /* Padding padrão para telas maiores */
+    display: flex;
+    justify-content: center; /* Centralizando o conteúdo (logo) */
+    align-items: center;
+    position: relative;
+    width: 100%; /* Garante que o topo ocupe 100% da largura */
+    box-sizing: border-box; /* Evita que o padding afete a largura total */
+    min-height: 80px; /* Mantendo a altura mínima */
+}
+
+.logo-container {
+    position: absolute;
+    left: 50%;
+    top: 50%; /* Centralizando verticalmente */
+    transform: translate(-50%, -50%); /* Centralizando tanto horizontal quanto verticalmente */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.header img {
+    max-width: 250px; /* Tamanho do logo para telas maiores */
+    height: auto;
+}
+
+/* Estilizando a barra de menu */
+.menu {
+    background-color: #333; /* Barra de menu preta */
+    padding: 10px 20px;
+    display: flex;
+    justify-content: center; /* Centralizando os menus */
+    width: 100%; /* Garante que a barra de menu ocupe 100% da largura */
+    box-sizing: border-box; /* Evita que o padding afete a largura total */
+}
+
+.menu a {
+    color: white;
+    text-decoration: none;
+    margin: 0 15px; /* Espaçamento entre os links */
+    font-family: Arial, sans-serif; /* Mantendo a fonte */
+    font-weight: bold; /* Mantendo o peso da fonte */
+    font-size: 16px; /* Mantendo o tamanho da fonte */
+}
+
+.menu a:hover {
+    color: #2E7D32; /* Hover com o mesmo verde fosco para consistência */
+}
+
+/* Media query para telas menores (celulares, até 600px) */
+@media screen and (max-width: 600px) {
+    .header {
+        padding: 20px 10px; /* Reduzindo o padding para telas menores */
+        min-height: 60px; /* Reduzindo a altura mínima */
+    }
+
+    .header img {
+        max-width: 180px; /* Reduzindo o tamanho do logo para telas menores */
+    }
+
+    .menu {
+        flex-direction: row; /* Mantendo os links alinhados horizontalmente */
+        justify-content: center; /* Centralizando os links */
+        padding: 10px 5px; /* Reduzindo o padding horizontal para telas menores */
+        flex-wrap: wrap; /* Permitindo que os links quebrem para a próxima linha se necessário */
+    }
+
+    .menu a {
+        margin: 0 8px; /* Reduzindo o espaçamento entre os links */
+        font-size: 12px; /* Reduzindo o tamanho da fonte para caber melhor */
+        padding: 5px; /* Adicionando padding para melhor toque */
+    }
+}

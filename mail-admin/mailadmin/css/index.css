@@ -1,0 +1,224 @@
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #f4f4f4;
+}
+
+.login-container {
+    background-color: white;
+    padding: 35px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: auto;
+    text-align: center;
+}
+
+.recover-container {
+    background-color: white;
+    padding: 35px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: auto;
+    text-align: center;
+}
+
+.login-container img, .recover-container img {
+    max-width: 250px;
+    margin-bottom: 10px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+    width: 304px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: left;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+input[type="text"], input[type="password"], input[type="email"] {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+input[type="submit"], .recover-submit, .back-to-login {
+    width: 304px;
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    text-align: center;
+    box-sizing: border-box;
+    height: 38px;
+    line-height: 18px;
+    font-size: 13px;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+}
+
+input[type="submit"] {
+    background-color: #4CAF50;
+    color: white;
+}
+
+input[type="submit"]:hover {
+    background-color: #45a049;
+}
+
+.recover-submit {
+    background-color: #ff0000;
+    color: white;
+    margin-bottom: 10px;
+}
+
+.recover-submit:hover {
+    background-color: #cc0000;
+}
+
+.back-to-login {
+    display: inline-block;
+    background-color: #000000;
+    color: white;
+    text-decoration: none;
+    margin-bottom: 10px;
+}
+
+.back-to-login:hover {
+    background-color: #333333;
+}
+
+.error {
+    color: red;
+    margin-bottom: 10px;
+}
+
+.success {
+    color: green;
+    margin-bottom: 10px;
+}
+
+.forgot-password {
+    margin-top: 10px;
+    font-size: 13px;
+}
+
+.forgot-password a {
+    color: #4CAF50;
+    text-decoration: none;
+}
+
+.forgot-password a:hover {
+    text-decoration: underline;
+}
+
+.credits {
+    margin-top: 15px;
+    font-size: 12px;
+    color: #666;
+    text-align: center;
+}
+
+.credits a {
+    color: #4CAF50;
+    text-decoration: none;
+}
+
+.credits a:hover {
+    text-decoration: underline;
+}
+
+.trust-device {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+    text-align: left;
+    width: 304px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.trust-device input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+.trust-device label {
+    font-size: 13px;
+    color: #333;
+    cursor: pointer;
+}
+
+/* reCAPTCHA centralizado */
+.recaptcha-container {
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.g-recaptcha {
+    display: inline-block;
+}
+
+/* Alerta 2FA */
+.twofa-alert {
+    background-color: #fff3cd;
+    border: 1px solid #ffeeba;
+    border-radius: 8px;
+    padding: 20px;
+    margin-top: 15px;
+    color: #856404;
+    text-align: center;
+    font-size: 13px;
+    position: relative;
+    width: 304px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.twofa-alert p {
+    margin: 0 0 15px 0;
+}
+
+.twofa-button {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-bottom: 15px;
+}
+
+.twofa-button:hover {
+    background-color: #45a049;
+}
+
+.dismiss-link {
+    position: absolute;
+    bottom: 6px; /* Ajustado de 0 para 10px para dar margem */
+    right: 10px;
+    font-size: 12px;
+    color: #666;
+    text-decoration: none;
+}
+
+.dismiss-link:hover {
+    text-decoration: underline;
+}
