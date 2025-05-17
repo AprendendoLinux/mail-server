@@ -184,7 +184,7 @@ Acesse a interface administrativa em:
 ```
 http://<SEU_IP>:8081
 ```
-Use as credenciais configuradas no banco de dados `mailserver`.
+Use as credenciais iniciais padrão: **usuário**: `admin`, **senha**: `admin`. Recomenda-se alterar a senha imediatamente após o primeiro login.
 
 ### Enviando e Recebendo E-mails
 
