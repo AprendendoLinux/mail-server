@@ -2,42 +2,75 @@ Licença MIT
 
 Direitos Autorais (c) 2025 AprendendoLinux
 
-Esta licença ("Licença") rege o uso do software AprendendoLinux/mail-server, incluindo todos os arquivos de código-fonte, documentação, scripts, configurações e quaisquer outros materiais associados (coletivamente denominados "Software"), disponibilizados no repositório [https://github.com/AprendendoLinux/mail-server](https://github.com/AprendendoLinux/mail-server). Ao acessar, usar, copiar, modificar ou distribuir o Software, você concorda em cumprir os termos e condições estabelecidos nesta Licença.
+Esta licença ("Licença") rege o uso do software AprendendoLinux/mail-server, incluindo todos os arquivos de 
+código-fonte, documentação, scripts, configurações e quaisquer outros materiais associados (coletivamente
+denominados "Software"), disponibilizados neste repositório. Ao acessar, usar, copiar, modificar ou distribuir
+o Software, você concorda em cumprir os termos e condições estabelecidos nesta Licença.
 
-1. Concessão de Licença
-Por meio desta Licença, é concedida, gratuitamente, a qualquer pessoa que obtenha uma cópia do Software, uma permissão mundial, não exclusiva, isenta de royalties e irrevogável para utilizar, copiar, modificar, mesclar, publicar, distribuir, sublicenciar e/ou vender cópias do Software, bem como para permitir que outras pessoas a quem o Software seja fornecido façam o mesmo, sujeito às condições descritas abaixo.
+1. Concessão de Licença:
+Por meio desta Licença, é concedida, gratuitamente, a qualquer pessoa que obtenha uma cópia do Software,
+uma permissão mundial, não exclusiva, isenta de royalties e irrevogável para utilizar, copiar, modificar,
+mesclar, publicar, distribuir, sublicenciar e/ou vender cópias do Software, bem como para permitir que outras
+pessoas a quem o Software seja fornecido façam o mesmo, sujeito às condições descritas abaixo.
 
-2. Condições
+2. Condições:
 O uso do Software está sujeito às seguintes condições:
-   a. O aviso de direitos autorais acima, indicando "Direitos Autorais (c) 2025 AprendendoLinux", e este aviso de permissão devem ser incluídos em todas as cópias ou partes substanciais do Software, seja em formato de código-fonte, binário ou qualquer outra forma de distribuição.
-   b. O Software deve ser acompanhado, em todas as suas distribuições, por uma cópia desta Licença ou por uma referência clara ao local onde esta Licença pode ser encontrada, como o repositório oficial do projeto.
 
-3. **Isenção de Garantias**
-O SOFTWARE É FORNECIDO "NO ESTADO EM QUE SE ENCONTRA", SEM GARANTIA DE QUALQUER TIPO, SEJA EXPRESSA, IMPLÍCITA OU ESTATUTÁRIA, INCLUINDO, MAS NÃO SE LIMITANDO A, GARANTIAS DE COMERCIALIZAÇÃO, ADEQUAÇÃO A UM PROPÓSITO ESPECÍFICO, NÃO VIOLAÇÃO DE DIREITOS DE TERCEIROS, FUNCIONALIDADE, SEGURANÇA OU DESEMPENHO. O AprendendoLinux não garante que o Software atenderá às suas necessidades, que funcionará ininterruptamente, que estará livre de erros ou que quaisquer defeitos serão corrigidos.
+- O aviso de direitos autorais acima, indicando "Direitos Autorais (c) 2025 Henrique Fagundes", e este aviso de
+permissão devem ser incluídos em todas as cópias ou partes substanciais do Software, seja em formato de código-fonte,
+binário ou qualquer outra forma de distribuição.
 
-4. **Limitação de Responsabilidade**
-EM NENHUM CASO OS AUTORES, COLABORADORES OU DETENTORES DOS DIREITOS AUTORAIS DO SOFTWARE, INCLUINDO O AprendendoLinux, SERÃO RESPONSÁVEIS POR QUALQUER RECLAMAÇÃO, DANOS, PERDAS, CUSTOS OU OUTRAS RESPONSABILIDADES, SEJA EM AÇÃO CONTRATUAL, DELITO, NEGLIGÊNCIA OU OUTRA FORMA, DECORRENTES DE, OU EM CONEXÃO COM, O USO, A INCAPACIDADE DE USO, A MODIFICAÇÃO OU A DISTRIBUIÇÃO DO SOFTWARE. ISSO INCLUI, SEM LIMITAÇÃO, DANOS DIRETOS, INDIRETOS, INCIDENTAIS, CONSEQUENCIAIS, ESPECIAIS OU PUNITIVOS, COMO PERDA DE DADOS, LUCROS, REPUTAÇÃO OU OUTROS PREJUÍZOS INTANGÍVEIS.
+- O Software deve ser acompanhado, em todas as suas distribuições, por uma cópia desta Licença ou por uma referência
+clara ao local onde esta Licença pode ser encontrada, como o repositório oficial do projeto.
 
-5. **Uso do Software**
-O Software é projetado para configurar e gerenciar um servidor de e-mail utilizando contêineres Docker, incluindo serviços como servidor de e-mail, cliente webmail (Roundcube), interface administrativa e gerenciamento de certificados SSL/TLS. Você é responsável por garantir que o uso do Software esteja em conformidade com todas as leis, regulamentos e políticas aplicáveis, incluindo, mas não se limitando a, leis de privacidade de dados, regulamentações de telecomunicações e normas de segurança cibernética. O AprendendoLinux não se responsabiliza por qualquer uso indevido do Software ou por configurações inadequadas que possam comprometer a segurança ou a funcionalidade do sistema.
+3. Isenção de Garantias:
+O SOFTWARE É FORNECIDO "NO ESTADO EM QUE SE ENCONTRA", SEM GARANTIA DE QUALQUER TIPO, SEJA EXPRESSA, IMPLÍCITA
+OU ESTATUTÁRIA, INCLUINDO, MAS NÃO SE LIMITANDO A, GARANTIAS DE COMERCIALIZAÇÃO, ADEQUAÇÃO A UM PROPÓSITO ESPECÍFICO,
+NÃO VIOLAÇÃO DE DIREITOS DE TERCEIROS, FUNCIONALIDADE, SEGURANÇA OU DESEMPENHO. O AprendendoLinux não garante que o
+Software atenderá às suas necessidades, que funcionará ininterruptamente, que estará livre de erros ou
+que quaisquer defeitos serão corrigidos.
 
-6. **Modificações e Distribuições**
-Você é livre para modificar o Software e distribuir suas versões modificadas, desde que respeite os termos desta Licença. Qualquer distribuição do Software, modificada ou não, deve incluir este arquivo de Licença e o aviso de direitos autorais. Você pode adicionar seus próprios termos de licenciamento às suas modificações, desde que esses termos não entrem em conflito com as permissões e condições desta Licença.
+4. Limitação de Responsabilidade:
+EM NENHUM CASO OS AUTORES, COLABORADORES OU DETENTORES DOS DIREITOS AUTORAIS DO SOFTWARE, INCLUINDO O HENRIQUE FAGUNDES,
+SERÃO RESPONSÁVEIS POR QUALQUER RECLAMAÇÃO, DANOS, PERDAS, CUSTOS OU OUTRAS RESPONSABILIDADES, SEJA EM AÇÃO CONTRATUAL,
+DELITO, NEGLIGÊNCIA OU OUTRA FORMA, DECORRENTES DE, OU EM CONEXÃO COM, O USO, A INCAPACIDADE DE USO, A MODIFICAÇÃO OU A
+DISTRIBUIÇÃO DO SOFTWARE. ISSO INCLUI, SEM LIMITAÇÃO, DANOS DIRETOS, INDIRETOS, INCIDENTAIS, CONSEQUENCIAIS, ESPECIAIS
+OU PUNITIVOS, COMO PERDA DE DADOS, LUCROS, REPUTAÇÃO OU OUTROS PREJUÍZOS INTANGÍVEIS.
 
-7. **Rescisão**
-Esta Licença é válida até que seja rescindida. A Licença será automaticamente rescindida se você violar qualquer uma de suas condições. Nesse caso, você deverá cessar imediatamente o uso do Software e destruir todas as cópias em sua posse.
+5. Uso do Software:
+O Software é projetado para configurar e gerenciar um servidor de e-mail utilizando contêineres Docker, incluindo serviços
+como servidor de e-mail, cliente webmail (Roundcube), interface administrativa e gerenciamento de certificados SSL/TLS.
+Você é responsável por garantir que o uso do Software esteja em conformidade com todas as leis, regulamentos e políticas
+aplicáveis, incluindo, mas não se limitando a, leis de privacidade de dados, regulamentações de telecomunicações e normas
+de segurança cibernética. O AprendendoLinux não se responsabiliza por qualquer uso indevido do Software ou por configurações
+inadequadas que possam comprometer a segurança ou a funcionalidade do sistema.
 
-8. **Disposições Gerais**
-   a. **Jurisdição**: Esta Licença é regida pelas leis aplicáveis, sem considerar conflitos de princípios legais. Qualquer disputa relacionada a esta Licença será resolvida nos tribunais competentes.
-   b. **Integralidade**: Esta Licença constitui o acordo completo entre as partes com relação ao Software e substitui quaisquer acordos anteriores, escritos ou orais.
-   c. **Alterações**: O AprendendoLinux reserva-se o direito de atualizar esta Licença, publicando uma nova versão no repositório do projeto. O uso continuado do Software após tais alterações implica aceitação dos novos termos.
+6. Modificações e Distribuições:
+Você é livre para modificar o Software e distribuir suas versões modificadas, desde que respeite os termos desta Licença.
+Qualquer distribuição do Software, modificada ou não, deve incluir este arquivo de Licença e o aviso de direitos autorais.
+Você pode adicionar seus próprios termos de licenciamento às suas modificações, desde que esses termos não entrem em conflito
+com as permissões e condições desta Licença.
 
-Ao usar o Software, você reconhece que leu, entendeu e concordou em estar vinculado aos termos desta Licença. Se você não concordar com estes termos, não use, copie, modifique ou distribua o Software.
+7. Rescisão:
+Esta Licença é válida até que seja rescindida. A Licença será automaticamente rescindida se você violar qualquer uma de suas
+condições. Nesse caso, você deverá cessar imediatamente o uso do Software e destruir todas as cópias em sua posse.
 
----
+8. Disposições Gerais:
+- Jurisdição: Esta Licença é regida pelas leis aplicáveis, sem considerar conflitos de princípios legais.
+Qualquer disputa relacionada a esta Licença será resolvida nos tribunais competentes.
+
+- Integralidade: Esta Licença constitui o acordo completo entre as partes com relação ao Software e substitui quaisquer
+acordos anteriores, escritos ou orais.
+
+- Alterações: O Henrique Fagundes reserva-se o direito de atualizar esta Licença, publicando uma nova versão no repositório
+do projeto. O uso continuado do Software após tais alterações implica aceitação dos novos termos.
+
+Ao usar o Software, você reconhece que leu, entendeu e concordou em estar vinculado aos termos desta Licença. Se você não concordar
+com estes termos, não use, copie, modifique ou distribua o Software.
 
 Contato:
-Para dúvidas, sugestões ou relatórios de problemas relacionados ao Software, visite o repositório oficial em [https://github.com/AprendendoLinux/mail-server](https://github.com/AprendendoLinux/mail-server) ou entre em contato com a comunidade de colaboradores.
+Para dúvidas, sugestões ou relatórios de problemas relacionados ao Software, envie um e-mail 
+para henrique@aprendendolinux.com
 
-AprendendoLinux
+Henrique Fagundes
 Última atualização: Maio de 2025
