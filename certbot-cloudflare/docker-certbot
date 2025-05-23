@@ -1,0 +1,88 @@
+#!/bin/bash
+
+source /opt/certbot/bin/activate
+
+# Verifica se as variaveis de ambiente estao definidas
+if [ -z "$CLOUDFLARE_EMAIL" ]; then
+  echo "Erro: A variavel CLOUDFLARE_EMAIL nao esta definida."
+  exit 1
+fi
+if [ -z "$CLOUDFLARE_API_KEY" ]; then
+  echo "Erro: A variavel CLOUDFLARE_API_KEY nao esta definida."
+  exit 1
+fi
+if [ -z "$MY_DOMAINS" ]; then
+  echo "Erro: A variavel MY_DOMAINS nao esta definida."
+  exit 1
+fi
+if [ -z "$DRY_RUN" ]; then
+  echo "Erro: A variavel DRY_RUN nao esta definida."
+  exit 1
+fi
+
+# Remove aspas simples ou duplas do CLOUDFLARE_EMAIL e do DRY_RUN
+CLEAN_CLOUDFLARE_EMAIL=$(echo "$CLOUDFLARE_EMAIL" | tr -d '"'\''')
+DRY_RUN=$(echo "$DRY_RUN" | tr -d '"'\''')
+
+# Diretorios para configuracao e logs
+CERT_DIR="/etc/letsencrypt"
+LOG_DIR="/var/log/letsencrypt"
+LOG_FILE="/var/log/certificados.log"
+
+# Cria o arquivo cloudflare.ini com o e-mail limpo
+echo "dns_cloudflare_email = $CLEAN_CLOUDFLARE_EMAIL" > /etc/cloudflare.ini
+echo "dns_cloudflare_api_key = $CLOUDFLARE_API_KEY" >> /etc/cloudflare.ini
+
+# Converte a string de dominios em um array usando a virgula como separador
+DOMAINS=()
+while IFS= read -r -d ',' domain; do
+  # Remove espacos e aspas do dominio
+  clean_domain=$(echo "$domain" | tr -d '[:space:]\"'\''')
+  if [ -n "$clean_domain" ]; then
+    DOMAINS+=("$clean_domain")
+  fi
+done <<< "$MY_DOMAINS,"
+
+# Monta a lista de dominios para o comando Certbot
+DOMAIN_ARGS=""
+for domain in "${DOMAINS[@]}"; do
+  DOMAIN_ARGS="$DOMAIN_ARGS -d $domain"
+done
+
+# Constrói os argumentos do Certbot com o e-mail limpo
+CERTBOT_ARGS="--non-interactive --dns-cloudflare --dns-cloudflare-credentials /etc/cloudflare.ini --dns-cloudflare-propagation-seconds 15 --agree-tos --email $CLEAN_CLOUDFLARE_EMAIL $DOMAIN_ARGS --verbose"
+
+# Adiciona --dry-run se DRY_RUN for true
+if [ "$DRY_RUN" = "true" ]; then
+  CERTBOT_ARGS="--dry-run $CERTBOT_ARGS"
+fi
+
+# Verifica se os diretorios existem
+for dir in "$CERT_DIR" "$LOG_DIR"; do
+  if [ ! -d "$dir" ]; then
+    echo "[$(date)] ERRO: Diretorio $dir nao existe. Criando..." >> "$LOG_FILE"
+    mkdir -p "$dir"
+    chmod 700 "$dir"
+  fi
+done
+
+# Verifica se o arquivo cloudflare.ini existe
+if [ ! -f /etc/cloudflare.ini ]; then
+  echo "[$(date)] ERRO: Arquivo /etc/cloudflare.ini nao encontrado." >> "$LOG_FILE"
+  exit 1
+fi
+
+# Garante permissoes seguras para o arquivo de credenciais
+chmod 600 /etc/cloudflare.ini
+
+# Executa o Certbot para renovar ou expandir certificados
+echo "[$(date)] Iniciando renovacao/expansao de certificados..." >> "$LOG_FILE"
+certbot certonly $CERTBOT_ARGS >> "$LOG_FILE" 2>&1
+
+# Verifica o status da execucao
+if [ $? -eq 0 ]; then
+  echo "[$(date)] Sucesso: Certificados renovados ou expandidos com sucesso." >> "$LOG_FILE"
+else
+  echo "[$(date)] ERRO: Falha ao renovar ou expandir certificados. Verifique o log em $LOG_FILE." >> "$LOG_FILE"
+  exit 1
+fi
