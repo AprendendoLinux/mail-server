@@ -32,23 +32,35 @@ services:
       - mail-network
 
   mail-certbot:
+    # Usa a imagem personalizada do Certbot com suporte ao plugin Cloudflare
     image: aprendendolinux/certbot-cloudflare:latest
+    # Garante que o contêiner reinicie automaticamente em caso de falha ou reinicialização
     restart: always
-    container_name: mail-certbot
-    hostname: mail-certbot
+    # Define o nome do contêiner como "certbot" para fácil identificação
+    container_name: certbot
+    # Define o hostname do contêiner como "certbot" para referência interna
+    hostname: certbot
+    # Conecta o contêiner à rede "echelon" para comunicação com outros serviços
     networks:
       - mail-network
+    # Mapeia diretórios do host para persistência de certificados e logs
     volumes:
-      - /srv/mail/certs/data:/etc/letsencrypt
+      # Mapeia /srv/letsencrypt/data para /etc/letsencrypt no contêiner (armazenamento de certificados)
+      - /srv/letsencrypt/data:/etc/letsencrypt
+      # Mapeia /srv/letsencrypt/log para /var/log/letsencrypt no contêiner (logs do Certbot)
+      - /srv/letsencrypt/log:/var/log/letsencrypt
+    # Define variáveis de ambiente para configuração do Certbot
     environment:
+      # Define o fuso horário do contêiner como America/Sao_Paulo (UTC-03:00)
       - TZ=America/Sao_Paulo
-    # Nao colocar o conteudo da variavel CERTBOT_DOMAINS entre aspas ou aspas simples
-      - CERTBOT_DOMAINS=-d *.dominiobase.com.br -d *.dominio1.com.br -d *.dominio2.com.br -d *.etc.om.br
-      - CERTBOT_BASE_DOMAIN=dominiobase.com.br
-      - CERTBOT_EMAIL=email-certbot@email.com.br
-      - CLOUDFLARE_EMAIL=email-conta-cloudflare@email.com.br
-      - CLOUDFLARE_API_KEY=sua-api-cloudflare
-    entrypoint: ["/bin/sh", "/entrypoint.sh"]
+      # Define o e-mail da conta Cloudflare
+      - CLOUDFLARE_EMAIL="deuemail@dominio.com.br"
+      # Define a chave da API do Cloudflare para autenticação DNS
+      - CLOUDFLARE_API_KEY="sua-api-da-cloudflare"
+      # Lista de domínios para os quais os certificados serão emitidos
+      - MY_DOMAINS="*.dominio1.com.br,*.dominio2.com.br,*.dominio3.com.br,*.dominio4.com.br,*.dominio5.com.br"
+      # Habilita o modo de teste (--dry-run) do Certbot quando true
+      - DRY_RUN="true"
 
   mail-server:
     # Imagem do servidor de e-mail, baseada no docker-mailserver
