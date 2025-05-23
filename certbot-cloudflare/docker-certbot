@@ -50,7 +50,7 @@ for domain in "${DOMAINS[@]}"; do
 done
 
 # Constrói os argumentos do Certbot com o e-mail limpo
-CERTBOT_ARGS="--non-interactive --dns-cloudflare --dns-cloudflare-credentials /etc/cloudflare.ini --dns-cloudflare-propagation-seconds 15 --agree-tos --email $CLEAN_CLOUDFLARE_EMAIL $DOMAIN_ARGS --verbose"
+CERTBOT_ARGS="--non-interactive --expand --dns-cloudflare --dns-cloudflare-credentials /etc/cloudflare.ini --dns-cloudflare-propagation-seconds 15 --agree-tos --email $CLEAN_CLOUDFLARE_EMAIL $DOMAIN_ARGS --verbose"
 
 # Adiciona --dry-run se DRY_RUN for true
 if [ "$DRY_RUN" = "true" ]; then
