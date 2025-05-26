@@ -54,7 +54,7 @@ services:
       # Define o fuso horário do contêiner como America/Sao_Paulo (UTC-03:00)
       - TZ=America/Sao_Paulo
       # Define o e-mail da conta Cloudflare
-      - CLOUDFLARE_EMAIL="deuemail@dominio.com.br"
+      - CLOUDFLARE_EMAIL="seuemail@dominio.com.br"
       # Define a chave da API do Cloudflare para autenticação DNS
       - CLOUDFLARE_API_KEY="sua-api-da-cloudflare"
       # Lista de domínios para os quais os certificados serão emitidos
