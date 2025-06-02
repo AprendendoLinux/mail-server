@@ -14,6 +14,11 @@ if (!$is_superadmin) {
     die("Acesso negado. Apenas SuperAdmins podem gerenciar administradores.");
 }
 
+// Salvar domínio selecionado se enviado via POST
+if (isset($_POST['domain']) && in_array($_POST['domain'], $domains)) {
+    $_SESSION['selected_domain'] = $_POST['domain'];
+}
+
 // Inicializar mensagens
 $error = '';
 $success = '';
@@ -129,10 +134,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit_admin'])) {
         if ($check_email_result && $check_email_result->num_rows > 0) {
             $error = "O e-mail $email já está em uso por outro administrador.";
         } else {
+            // Excluir registros de password_resets para o e-mail atual
+            $current_email_query = "SELECT email FROM admins WHERE username = '$old_username'";
+            $current_email_result = $conn->query($current_email_query);
+            if ($current_email_result && $current_email_result->num_rows > 0) {
+                $current_email = $current_email_result->fetch_assoc()['email'];
+                $delete_password_reset_query = "DELETE FROM password_resets WHERE email = '" . $conn->real_escape_string($current_email) . "'";
+                $conn->query($delete_password_reset_query);
+            }
+
             // Iniciar transação para garantir consistência
             $conn->begin_transaction();
             try {
-                // Atualizar e-mail e is_superadmin (username não é mais editável)
+                // Atualizar e-mail e is_superadmin
                 $update_admin_query = "UPDATE admins SET email = '" . $conn->real_escape_string($email) . "', is_superadmin = $is_superadmin WHERE username = '$old_username'";
                 if (!$conn->query($update_admin_query)) {
                     throw new Exception("Erro ao atualizar administrador: " . $conn->error);

@@ -11,6 +11,9 @@ if (isset($_COOKIE['trusted_device_token'])) {
     // Não remove o cookie, apenas mantém
 }
 
+// Remove explicitamente selected_domain
+unset($_SESSION['selected_domain']);
+
 // Destrói a sessão
 $_SESSION = [];
 if (ini_get("session.use_cookies")) {

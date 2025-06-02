@@ -124,7 +124,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_email'])) {
     $current_password = trim($_POST['current_password_email']);
 
     if (empty($new_email) || empty($current_password)) {
-        $error = "Todos os campos são obrigatórios.";
+        $error = "Todos osCampos são obrigatórios.";
     } elseif (!password_verify($current_password, $current_password_hash)) {
         $error = "A senha atual está incorreta.";
     } elseif (!filter_var($new_email, FILTER_VALIDATE_EMAIL)) {
@@ -135,6 +135,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_email'])) {
         if ($email_check_result->num_rows > 0) {
             $error = "Este e-mail já está em uso.";
         } else {
+            // Excluir registros de password_resets para o e-mail atual
+            $delete_password_reset_query = "DELETE FROM password_resets WHERE email = '" . $conn->real_escape_string($email) . "'";
+            $conn->query($delete_password_reset_query);
+
             $update_email_query = "UPDATE admins SET email = '" . $conn->real_escape_string($new_email) . "' WHERE username = '$username'";
             if ($conn->query($update_email_query) === TRUE && $conn->affected_rows > 0) {
                 $success = "E-mail alterado com sucesso!";

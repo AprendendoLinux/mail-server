@@ -49,8 +49,11 @@ if ($domains_result && $domains_result->num_rows > 0) {
     }
 }
 
-// Determinar o domínio selecionado (padrão é o primeiro domínio da lista)
-$selected_domain = isset($_POST['domain']) ? $_POST['domain'] : (isset($_GET['domain']) ? $_GET['domain'] : (isset($domains[0]) ? $domains[0] : ''));
+// Determinar o domínio selecionado
+if (isset($_POST['domain']) && in_array($_POST['domain'], $domains)) {
+    $_SESSION['selected_domain'] = $_POST['domain'];
+}
+$selected_domain = isset($_SESSION['selected_domain']) && in_array($_SESSION['selected_domain'], $domains) ? $_SESSION['selected_domain'] : (isset($_GET['domain']) && in_array($_GET['domain'], $domains) ? $_GET['domain'] : (isset($domains[0]) ? $domains[0] : ''));
 
 // Verificar se o domínio selecionado está na lista de domínios permitidos
 if (!in_array($selected_domain, $domains)) {

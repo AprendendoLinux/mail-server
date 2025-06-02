@@ -14,6 +14,24 @@ if (!$is_superadmin) {
     die("Acesso negado. Apenas SuperAdmins podem gerenciar domínios.");
 }
 
+// Salvar domínio selecionado se enviado via POST
+$domains = [];
+$temp_conn = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_DATABASE, DB_PORT);
+if ($temp_conn->connect_error) {
+    die("Conexão temporária falhou: " . $temp_conn->connect_error);
+}
+$domains_query = "SELECT domain FROM domain WHERE active = 1";
+$domains_result_temp = $temp_conn->query($domains_query);
+if ($domains_result_temp && $domains_result_temp->num_rows > 0) {
+    while ($row = $domains_result_temp->fetch_assoc()) {
+        $domains[] = $row['domain'];
+    }
+}
+$temp_conn->close();
+if (isset($_POST['domain']) && in_array($_POST['domain'], $domains)) {
+    $_SESSION['selected_domain'] = $_POST['domain'];
+}
+
 // Inicializar mensagens
 $error = '';
 $success = '';
@@ -221,8 +239,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_domain'])) {
                             <?php while ($domain = $domains_result->fetch_assoc()): ?>
                                 <tr>
                                     <td>
-                                        <a href="?delete=<?php echo urlencode($domain['domain']); ?>" class="delete-icon" onclick="return confirm('Tem certeza que deseja excluir o domínio <?php echo htmlspecialchars($domain['domain']); ?>?');" <?php echo ($domain['domain'] === 'default' || $domain['active'] == 0) ? 'disabled' : ''; ?>>🗑️</a>
-                                        <a href="?toggle_active=<?php echo urlencode($domain['domain']); ?>" class="toggle-icon"><?php echo $domain['active'] ? '🔘' : '⭕'; ?></a>
+                                        <a href="?delete=<?php echo urlencode($domain['domain']); ?><?php echo isset($_SESSION['selected_domain']) ? '&domain=' . urlencode($_SESSION['selected_domain']) : ''; ?>" class="delete-icon" onclick="return confirm('Tem certeza que deseja excluir o domínio <?php echo htmlspecialchars($domain['domain']); ?>?');" <?php echo ($domain['domain'] === 'default' || $domain['active'] == 0) ? 'disabled' : ''; ?>>🗑️</a>
+                                        <a href="?toggle_active=<?php echo urlencode($domain['domain']); ?><?php echo isset($_SESSION['selected_domain']) ? '&domain=' . urlencode($_SESSION['selected_domain']) : ''; ?>" class="toggle-icon"><?php echo $domain['active'] ? '🔘' : '⭕'; ?></a>
                                     </td>
                                     <td><?php echo htmlspecialchars($domain['domain']); ?></td>
                                     <td><?php echo $domain['active'] ? 'Sim' : 'Não'; ?></td>
