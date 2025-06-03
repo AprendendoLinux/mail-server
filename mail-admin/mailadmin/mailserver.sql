@@ -1,7 +1,7 @@
 /*M!999999\- enable the sandbox mode */ 
--- MariaDB dump 10.19  Distrib 10.11.11-MariaDB, for debian-linux-gnu (x86_64)
+-- MariaDB dump 10.19  Distrib 10.5.29-MariaDB, for debian-linux-gnu (x86_64)
 --
--- Host: 127.0.0.1    Database: teste
+-- Host: 127.0.0.1    Database: dev
 -- ------------------------------------------------------
 -- Server version	5.7.36
 
@@ -68,8 +68,7 @@ CREATE TABLE `admins` (
 
 LOCK TABLES `admins` WRITE;
 /*!40000 ALTER TABLE `admins` DISABLE KEYS */;
-INSERT INTO `admins` VALUES
-('admin','admin@dominio.com.br','$2y$10$i8AkuBxVEmOwKLSWxSN9ke/PpQlI8BnebVxCS2dom41HrAFCFPBkK',1,1,'',0);
+INSERT INTO `admins` VALUES ('admin','admin@dominiobase.com.br','$2y$10$GDMLK4uNUDREBw5PlUfRtO/HVtiuoBkl..obGB5gIzt2o5dBQ.Fdu',1,1,NULL,0);
 /*!40000 ALTER TABLE `admins` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -119,6 +118,7 @@ CREATE TABLE `domain` (
 
 LOCK TABLES `domain` WRITE;
 /*!40000 ALTER TABLE `domain` DISABLE KEYS */;
+INSERT INTO `domain` VALUES ('dominiobase.com.br',1);
 /*!40000 ALTER TABLE `domain` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -161,7 +161,7 @@ CREATE TABLE `password_resets` (
   `token` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` datetime NOT NULL,
   PRIMARY KEY (`email`),
-  CONSTRAINT `fk_password_resets_email` FOREIGN KEY (`email`) REFERENCES `admins` (`email`) ON DELETE CASCADE
+  CONSTRAINT `fk_password_resets_email` FOREIGN KEY (`email`) REFERENCES `admins` (`email`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -188,7 +188,7 @@ CREATE TABLE `trusted_devices` (
   `expires_at` datetime NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `token` (`token`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -209,4 +209,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-05-16 20:30:03
+-- Dump completed on 2025-06-02 21:04:49
