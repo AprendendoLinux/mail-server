@@ -363,6 +363,8 @@ services:
     container_name: mail-admin
     hostname: mail-admin
     environment:
+      #### TIME ZONE
+      - TZ=America/Sao_Paulo
       #### SMTP Settings
       # Host SMTP do seu provedor
       - SMTP_HOST=smtp.dominio.com.br
